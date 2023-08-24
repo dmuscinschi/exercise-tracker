@@ -7,7 +7,7 @@ export const usersList = (req, res) => {
   db.all(sql, params, (err, rows: User[]) => {
     console.log('working');
     if (err) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({ status: 'error', error: err.message });
       return;
     }
     res.json({
@@ -15,18 +15,17 @@ export const usersList = (req, res) => {
       data: rows,
     });
   });
-  // res.status(200).json({ id: 1, message: 'U got me' });
 };
 
 export const user_create_post = (req, res) => {
   console.log('POST REQUEST');
   console.log('REQ', req.body);
-  let sqlQuery = 'INSERT INTO user (name, email, password) VALUES (?,?,?)';
-  let params = ['CHECKME', 'CHECKME@gmail.com', 'CHECKME'];
+  let sqlQuery = 'INSERT INTO user (username) VALUES (?)';
+  let params = ['Micke'];
   db.run(sqlQuery, params, (err, rows) => {
     console.log('add new user');
     if (err) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({ status: 'error', error: err.message });
       return;
     }
     res.json({ status: 'success', data: rows });
@@ -34,22 +33,20 @@ export const user_create_post = (req, res) => {
 };
 
 export const user_get = (req, res) => {
-  const sqlQuery = 'select * from user where id = ?';
-  const params = [req.params.id];
-  console.log('/api/users/:id');
+  const sqlQuery = 'select * from user where username = ?';
+  const params = [req.params.username];
 
   db.get(sqlQuery, params, (err, row) => {
     console.log('ROWROW', row);
     if (err) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({ status: 'error', error: err.message });
       return;
     }
     res.json({
-      message: 'success',
+      status: 'success',
       data: row,
     });
   });
-  // res.json({ status: 'success', data: 'hello' });
 };
 
 export const user_exercises_post = (req, res) => {
@@ -62,7 +59,7 @@ export const user_exercises_post = (req, res) => {
   db.run(sqlQuery, params, (err, rows) => {
     console.log('add new exercise for user:', req.params.id);
     if (err) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({ status: 'error', error: err.message });
       return;
     }
     res.json({ status: 'success', data: rows });
@@ -78,27 +75,32 @@ export const user_logs_get = async (req, res) => {
 
   let id, username;
 
-  await db.get(sqlQuery1, params, (err, row: User) => {
-    console.log('ROWROW', row);
-    if (err) {
-      res.status(400).json({ error: err.message });
-      return;
-    }
+  await new Promise((resolve, reject) => {
+    db.get(sqlQuery1, params, (err, row: User) => {
+      console.log('ROWROW', row);
+      if (err) {
+        res.status(400).json({ status: 'error', error: err.message });
+        reject();
+      }
 
-    id = row.id;
-    username = row.username;
+      id = row.id;
+      username = row.username;
+      resolve(true);
+    });
   });
 
   let exercies: Exercise[] = [];
-  db.all(sqlQuery, params, (err, row: Exercise[]) => {
-    console.log('EXERCISES', row);
-    if (err) {
-      res.status(400).json({ error: err.message });
-      return;
-    }
+  await new Promise((resolve, reject) => {
+    db.all(sqlQuery, params, (err, row: Exercise[]) => {
+      console.log('EXERCISES', row);
+      if (err) {
+        res.status(400).json({ status: 'error', error: err.message });
+        reject();
+      }
 
-    exercies = row;
-    return row;
+      exercies = row;
+      resolve(true);
+    });
   });
 
   exercisesLog = {
@@ -109,7 +111,7 @@ export const user_logs_get = async (req, res) => {
   };
 
   res.json({
-    message: 'success',
+    status: 'success',
     data: exercisesLog,
   });
 };

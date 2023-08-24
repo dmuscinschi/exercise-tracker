@@ -9,7 +9,7 @@ router.get(ENDPOINTS_TYPE.API_USERS, userController.usersList);
 
 router.post(ENDPOINTS_TYPE.API_USER, userController.user_create_post);
 
-router.get(ENDPOINTS_TYPE.API_USERS_BY_ID, userController.user_get);
+router.get(ENDPOINTS_TYPE.API_USERS_BY_USERNAME, userController.user_get);
 
 router.post(ENDPOINTS_TYPE.API_CREATE_EXERCISES, userController.user_exercises_post);
 

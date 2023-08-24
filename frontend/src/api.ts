@@ -1,18 +1,13 @@
 export const getUsers = async () => {
   const response = await fetch('http://localhost:3000/api/users');
-
-  console.log('Response', response);
   const data = await response.json();
-  console.log('Data', data);
+  console.log(data);
   return data;
 };
 
-export const fetchData = async () => {
-  console.log('Is it working?');
-
+export const createUser = async (username: string) => {
   const dataCheck = {
-    user: 'hello',
-    name: 'John',
+    username,
   };
   const response = await fetch('http://localhost:3000/api/user/', {
     method: 'POST',
@@ -25,12 +20,17 @@ export const fetchData = async () => {
   return { message: 'success' };
 };
 
-export const getUserById = async () => {
-  const id = 1;
-  const response = await fetch(`http://localhost:3000/api/users/${id}`, {});
+export const getUserById = async (username: string) => {
+  const response = await fetch(`http://localhost:3000/api/users/${username}`, {});
 
-  console.log('getUserById', response);
   const data = await response.json();
-  console.log('Data', data);
+  console.log(data);
+  return data;
+};
+
+export const getUserLogs = async (id: string) => {
+  const response = await fetch(`http://localhost:3000/api/users/${id}/logs`);
+  const data = await response.json();
+  console.log(data);
   return data;
 };

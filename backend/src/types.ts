@@ -26,7 +26,7 @@ export interface UserExerciseLog extends User {
 export enum ENDPOINTS_TYPE {
   API_USERS = '/api/users',
   API_USER = '/api/user',
-  API_USERS_BY_ID = '/api/users/:id',
+  API_USERS_BY_USERNAME = '/api/users/:username',
   API_CREATE_EXERCISES = '/api/users/:id/exercises',
   API_USERS_LOGS = '/api/users/:id/logs',
 }
