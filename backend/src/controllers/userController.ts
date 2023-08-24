@@ -50,8 +50,9 @@ export const user_get = (req, res) => {
 };
 
 export const user_exercises_post = (req, res) => {
-  const params = [req.params.id, req.body.exerciseId, req.body.duration];
-  let sqlQuery = 'INSERT INTO exercises (userId, exerciseId, duration) VALUES (?,?,?)';
+  console.log('NEW REQUEST');
+  const params = [req.params.id, req.body.duration, req.body.description, req.body.date];
+  let sqlQuery = 'INSERT INTO exercises (id, duration, description, date) VALUES (?,?,?,?)';
 
   const data = req.body;
   console.log(params, data, 'HELLO');
@@ -68,7 +69,7 @@ export const user_exercises_post = (req, res) => {
 
 export const user_logs_get = async (req, res) => {
   const params = [req.params.id];
-  let sqlQuery = 'select * from exercises where userId = ?';
+  let sqlQuery = 'select * from exercises where id = ?';
   let sqlQuery1 = 'select * from user where id = ?';
 
   let exercisesLog: UserExerciseLog;

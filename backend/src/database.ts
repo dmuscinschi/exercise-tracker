@@ -18,10 +18,10 @@ const db = new sqlite3.Database(DBSOURCE, (err) => {
 
     const createTableExercises = `
       CREATE TABLE exercises (
-        userId INTEGER,
-        exerciseId INTEGER,
+        id INTEGER PRIMARY KEY,
+        description INTEGER,
         duration INTEGER,
-        PRIMARY KEY (userId, exerciseId)
+        date DATE
         );`;
 
     const tables = [createTableUser, createTableExercises];

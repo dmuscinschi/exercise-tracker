@@ -31,7 +31,7 @@ function App() {
 
   return (
     <>
-      <h1>Open console to get results</h1>
+      <h1>Open console to get the results</h1>
       Look what we have got here
       <form onSubmit={createUserHandler}>
         <input type="text" name="" id="" placeholder="username" ref={usernameRef} />
@@ -45,6 +45,10 @@ function App() {
       <form onSubmit={getUserLogsHandler}>
         <input type="text" name="" id="" placeholder="username" ref={userIdRef} />
         <button type="submit">Get user logs by user id</button>
+      </form>
+      <form>
+        <input type="text" name="" id="" placeholder="username" ref={userIdRef} />
+        <button type="submit">Create exercise by user id</button>
       </form>
     </>
   );

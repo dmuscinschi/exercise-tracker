@@ -69,6 +69,10 @@ button:focus-visible {
 
 form {
   padding: 10px;
+  background-color: #213547;
+  max-width: 400px;
+  margin: 10px;
+  border-radius: 5px;
 }
 
 input {
