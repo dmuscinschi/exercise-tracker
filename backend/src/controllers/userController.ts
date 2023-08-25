@@ -18,12 +18,9 @@ export const usersList = (req, res) => {
 };
 
 export const user_create_post = (req, res) => {
-  console.log('POST REQUEST');
-  console.log('REQ', req.body);
   let sqlQuery = 'INSERT INTO user (username) VALUES (?)';
-  let params = ['Micke'];
+  let params = [req.body.username];
   db.run(sqlQuery, params, (err, rows) => {
-    console.log('add new user');
     if (err) {
       res.status(400).json({ status: 'error', error: err.message });
       return;
@@ -33,8 +30,10 @@ export const user_create_post = (req, res) => {
 };
 
 export const user_get = (req, res) => {
+  console.log('GET USER');
   const sqlQuery = 'select * from user where username = ?';
   const params = [req.params.username];
+  console.log('req.params.username', req.params.username);
 
   db.get(sqlQuery, params, (err, row) => {
     console.log('ROWROW', row);
@@ -51,25 +50,26 @@ export const user_get = (req, res) => {
 
 export const user_exercises_post = (req, res) => {
   console.log('NEW REQUEST');
-  const params = [req.params.id, req.body.duration, req.body.description, req.body.date];
-  let sqlQuery = 'INSERT INTO exercises (id, duration, description, date) VALUES (?,?,?,?)';
+  const params = [req.params.userId, req.body.duration, req.body.description, req.body.date];
+  let sqlQuery = 'INSERT INTO exercises (userId, duration, description, date) VALUES (?,?,?,?)';
 
   const data = req.body;
   console.log(params, data, 'HELLO');
 
   db.run(sqlQuery, params, (err, rows) => {
-    console.log('add new exercise for user:', req.params.id);
+    console.log('add new exercise for user:', req.params.userId);
     if (err) {
       res.status(400).json({ status: 'error', error: err.message });
       return;
     }
+    console.log('ROWEXERCISES', rows);
     res.json({ status: 'success', data: rows });
   });
 };
 
 export const user_logs_get = async (req, res) => {
-  const params = [req.params.id];
-  let sqlQuery = 'select * from exercises where id = ?';
+  const params = [req.params.userId];
+  let sqlQuery = 'select * from exercises where userId = ?';
   let sqlQuery1 = 'select * from user where id = ?';
 
   let exercisesLog: UserExerciseLog;

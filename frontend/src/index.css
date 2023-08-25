@@ -78,3 +78,7 @@ form {
 input {
   margin-right: 6px;
 }
+
+textarea {
+  margin-left: 10px;
+}

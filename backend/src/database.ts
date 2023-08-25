@@ -5,7 +5,7 @@ const DBSOURCE = 'db.sqlite';
 const db = new sqlite3.Database(DBSOURCE, (err) => {
   if (err) {
     // Cannot open database
-    console.error(err.message);
+    console.error('ERROR WHILE OPENING', err.message);
     throw err;
   } else {
     console.log('Connected to the SQLite database.');
@@ -18,10 +18,11 @@ const db = new sqlite3.Database(DBSOURCE, (err) => {
 
     const createTableExercises = `
       CREATE TABLE exercises (
-        id INTEGER PRIMARY KEY,
-        description INTEGER,
+        exerciseId INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId INTEGER,
+        description text,
         duration INTEGER,
-        date DATE
+        date text
         );`;
 
     const tables = [createTableUser, createTableExercises];
