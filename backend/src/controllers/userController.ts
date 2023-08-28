@@ -10,7 +10,7 @@ export const usersList = (req, res) => {
       res.status(400).json({ status: 'error', error: err.message });
       return;
     }
-    res.json({
+    res.status(200).json({
       status: 'success',
       data: rows,
     });
@@ -20,23 +20,37 @@ export const usersList = (req, res) => {
 export const user_create_post = (req, res) => {
   let sqlQuery = 'INSERT INTO user (username) VALUES (?)';
   let params = [req.body.username];
+
+  if (req.body.username === '') {
+    return res.status(400).json({ status: 'error', message: 'Username must not be empty' });
+  }
+
+  if (req.body.username.length < 4) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'Username must be at least 4 characters' });
+  }
+
   db.run(sqlQuery, params, (err, rows) => {
     if (err) {
       res.status(400).json({ status: 'error', error: err.message });
       return;
     }
-    res.json({ status: 'success', data: rows });
+    res.status(200).json({ status: 'success', data: rows });
   });
 };
 
 export const user_get = (req, res) => {
-  console.log('GET USER');
   const sqlQuery = 'select * from user where username = ?';
   const params = [req.params.username];
-  console.log('req.params.username', req.params.username);
+
+  if (req.params.username.length < 4) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'Username must be at least 4 characters' });
+  }
 
   db.get(sqlQuery, params, (err, row) => {
-    console.log('ROWROW', row);
     if (err) {
       res.status(400).json({ status: 'error', error: err.message });
       return;
@@ -49,21 +63,44 @@ export const user_get = (req, res) => {
 };
 
 export const user_exercises_post = (req, res) => {
-  console.log('NEW REQUEST');
   const params = [req.params.userId, req.body.duration, req.body.description, req.body.date];
   let sqlQuery = 'INSERT INTO exercises (userId, duration, description, date) VALUES (?,?,?,?)';
 
-  const data = req.body;
-  console.log(params, data, 'HELLO');
+  if (isNaN(req.params.userId)) {
+    return res.status(400).json({ status: 'error', message: 'User id should be number' });
+  }
+
+  if (!req.body.duration) {
+    return res.status(400).json({ status: 'error', message: 'Duration should not be empty' });
+  }
+
+  if (isNaN(req.body.duration)) {
+    return res.status(400).json({ status: 'error', message: 'Duration should be number(minutes)' });
+  }
+
+  if (!req.body.description) {
+    return res.status(400).json({ status: 'error', message: 'Description should not be empty' });
+  }
+
+  if (req.body.date === '') {
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'Date should be in format: YYYY:MM:DD' });
+  }
+
+  if (isNaN(Date.parse(req.body.date))) {
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'Date should be in format: YYYY:MM:DD' });
+  }
+
+  console.log('req.body.date', !new Date(req.body.date));
 
   db.run(sqlQuery, params, (err, rows) => {
-    console.log('add new exercise for user:', req.params.userId);
     if (err) {
-      res.status(400).json({ status: 'error', error: err.message });
-      return;
+      return res.status(400).json({ status: 'error', error: err.message });
     }
-    console.log('ROWEXERCISES', rows);
-    res.json({ status: 'success', data: rows });
+    return res.status(200).json({ status: 'success', data: rows });
   });
 };
 
@@ -75,6 +112,10 @@ export const user_logs_get = async (req, res) => {
   let exercisesLog: UserExerciseLog;
 
   let id, username;
+
+  if (isNaN(req.params.userId)) {
+    return res.status(400).json({ status: 'error', message: 'User id should be number' });
+  }
 
   await new Promise((resolve, reject) => {
     db.get(sqlQuery1, params, (err, row: User) => {
@@ -111,7 +152,7 @@ export const user_logs_get = async (req, res) => {
     count: exercies.length,
   };
 
-  res.json({
+  res.status(200).json({
     status: 'success',
     data: exercisesLog,
   });
