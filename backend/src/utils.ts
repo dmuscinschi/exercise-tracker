@@ -6,14 +6,11 @@ export const userExists = async (username) => {
     db.get(sqlQuery, username, (err, row) => {
       if (err) {
         resolve(false);
-        return false;
       } else {
         if (row) {
           resolve(false);
-          return false;
         }
         resolve(true);
-        return true;
       }
     });
   });
