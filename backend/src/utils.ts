@@ -3,10 +3,15 @@ import db from './database';
 export const userExists = async (username) => {
   const sqlQuery = 'select * from user where username = ?';
   const result = await new Promise<boolean>((resolve) => {
-    db.get(sqlQuery, username, (err) => {
+    db.get(sqlQuery, username, (err, row) => {
       if (err) {
+        resolve(false);
         return false;
       } else {
+        if (row) {
+          resolve(false);
+          return false;
+        }
         resolve(true);
         return true;
       }

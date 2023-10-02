@@ -25,7 +25,7 @@ export const user_create_post = async (req, res) => {
     return res.status(400).json({ status: 'error', message: 'Username must not be empty' });
   }
 
-  if (await userExists(req.body.username)) {
+  if (!(await userExists(params))) {
     res.status(400).json({ status: 'error', error: 'User already exists' });
     return;
   }
@@ -143,13 +143,14 @@ export const user_logs_get = async (req, res) => {
   const limit = req.query.limit;
   const fromDate = req.query.from;
   const to = req.query.to;
+  let sqlQuery = `select * from ( select * from exercises where userId = ? order by datetime(date) ${
+    fromDate ? 'asc' : 'desc'
+  }) as ordered_exercises
+   ${fromDate ? `where date >= '${fromDate}'` : ''} 
+   ${to ? (!fromDate ? `where date < '${to}'` : `and date < '${to}'`) : ''}
+   ${limit ? `limit ${limit}` : ''}
+   `;
 
-  let sqlQuery = `select * from exercises where userId = ? ${
-    fromDate ? `and date > '${fromDate}'` : ''
-  } ${to ? `and date < '${to}'` : ''} 
-  order by datetime(date) desc
-    ${limit ? `limit ${limit}` : ''}
-    `;
   let sqlQuery1 = 'select * from user where id = ?';
 
   let exercisesLog: UserExerciseLog;
