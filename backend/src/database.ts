@@ -1,5 +1,4 @@
 import sqlite3 from 'sqlite3';
-import { Database } from 'sqlite-async';
 
 const DBSOURCE = 'db.sqlite';
 const db = new sqlite3.Database(DBSOURCE, (err) => {
@@ -27,16 +26,19 @@ const db = new sqlite3.Database(DBSOURCE, (err) => {
 
     const tables = [createTableUser, createTableExercises];
 
-    tables.forEach((table) => {
+    tables.forEach((table, index) => {
       db.run(table, (err) => {
         if (err) {
           // Table already created
           console.log('ANY ERROR:', err);
         } else {
           // Table just created, creating some rows
-          var insertUser = 'INSERT INTO user (id, username) VALUES (?,?)';
-          db.run(insertUser, ['1', 'nicko']);
-          db.run(insertUser, ['2', 'mockey']);
+          if (index === 0) {
+            // just for users
+            var insertUser = 'INSERT INTO user (id, username) VALUES (?,?)';
+            db.run(insertUser, ['1', 'nicko']);
+            db.run(insertUser, ['2', 'mockey']);
+          }
         }
       });
     });
@@ -44,3 +46,7 @@ const db = new sqlite3.Database(DBSOURCE, (err) => {
 });
 
 export default db;
+
+// INSERT INTO exercises (exerciseid, userid, description, duration, date) VALUES (4, 1, 'Hello', 323, 2012-02-02)
+
+// select * from exercises where userId = 1 and date(date) > 2003-10-10

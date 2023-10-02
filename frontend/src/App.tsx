@@ -27,8 +27,10 @@ function App() {
     if (usernameRef.current) {
       createUser(usernameRef.current.value).then((resp) => {
         textAreaRef.current.value = prettifyPrint(resp);
+        if (usernameRef.current && resp.status !== 'error') {
+          usernameRef.current.value = '';
+        }
       });
-      usernameRef.current.value = '';
     }
   };
 
@@ -104,7 +106,7 @@ function App() {
         <input type="text" name="" id="" placeholder="userid" ref={createExerciseUserIdRef} />
         <input type="text" name="" id="" placeholder="duration(in minutes)" ref={durationRef} />
         <input type="text" name="" id="" placeholder="description" ref={descriptionRef} />
-        <input type="text" name="" id="" placeholder="date (YYYY:MM:DD)" ref={dateRef} />
+        <input type="text" name="" id="" placeholder="date (YYYY-MM-DD)" ref={dateRef} />
         <button type="submit">Create exercise by user id</button>
       </form>
       <textarea name="" id="" cols={60} rows={30} ref={textAreaRef}></textarea>
