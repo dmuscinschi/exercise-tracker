@@ -35,7 +35,7 @@ export const userExistsById = async (userId) => {
 export const dateIsValid = (date: string) => {
   const [year, month, day] = date.split('-').map(Number);
 
-  if (year >= 0 && month >= 1 && month < 12 && day >= 1 && day <= 31) {
+  if (year >= 0 && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
     return true;
   } else {
     return false;

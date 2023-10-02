@@ -1,8 +1,9 @@
 import db from '../database';
 import { Exercise, User, UserExerciseLog } from '../types';
 import { dateIsValid, userExists, userExistsById } from '../utils';
+const moment = require('moment'); // require
 
-export const usersList = (req, res) => {
+export const usersList = (_, res) => {
   let sql = 'select * from user';
   let params = [];
   db.all(sql, params, (err, rows: User[]) => {
@@ -20,6 +21,10 @@ export const usersList = (req, res) => {
 export const user_create_post = async (req, res) => {
   let sqlQuery = 'INSERT INTO user (username) VALUES (?)';
   let params = [req.body.username];
+
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).json({ status: 'error', message: 'Username must not be empty' });
+  }
 
   if (req.body.username === '') {
     return res.status(400).json({ status: 'error', message: 'Username must not be empty' });
@@ -78,6 +83,10 @@ export const user_exercises_post = async (req, res) => {
   const dateIsEmpty = req.body.date === '' ? true : false;
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // should be format YYYY-MM-DD
 
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).json({ status: 'error', message: 'Filds must be filled' });
+  }
+
   if (!(await userExistsById(req.params.userId))) {
     return res.status(400).json({ status: 'error', message: 'User does not exist' });
   }
@@ -98,15 +107,19 @@ export const user_exercises_post = async (req, res) => {
     return res.status(400).json({ status: 'error', message: 'Description should not be empty' });
   }
 
-  if (!dateRegex.test(req.body.date)) {
+  const exerciseDate = dateIsEmpty
+    ? new Date().toISOString().slice(0, 10)
+    : new Date(req.body.date).toISOString().slice(0, 10);
+
+  if (!moment(req.body.date).isValid()) {
+    return res.status(400).json({ status: 'error', message: 'Date should be valid' });
+  }
+
+  if (!dateIsEmpty && !dateRegex.test(req.body.date)) {
     return res
       .status(400)
       .json({ status: 'error', message: 'Date should be in format: YYYY-MM-DD' });
   }
-
-  const exerciseDate = dateIsEmpty
-    ? new Date().toISOString().slice(0, 10)
-    : new Date(req.body.date.split('-').map(Number)).toISOString().slice(0, 10);
 
   if (!exerciseDate) {
     return res
