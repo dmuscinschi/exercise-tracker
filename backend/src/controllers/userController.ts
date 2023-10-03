@@ -20,13 +20,14 @@ export const usersList = (_, res) => {
 
 export const user_create_post = async (req, res) => {
   let sqlQuery = 'INSERT INTO user (username) VALUES (?)';
-  let params = [req.body.username];
-
-  if (Object.keys(req.body).length === 0) {
+  const { username } = req.body;
+  if (typeof username !== 'string') {
     return res.status(400).json({ status: 'error', message: 'Username must not be empty' });
   }
 
-  if (req.body.username === '') {
+  let params = [username];
+
+  if (username === '') {
     return res.status(400).json({ status: 'error', message: 'Username must not be empty' });
   }
 
@@ -35,7 +36,7 @@ export const user_create_post = async (req, res) => {
     return;
   }
 
-  if (req.body.username.length < 4) {
+  if (username.length < 4) {
     return res
       .status(400)
       .json({ status: 'error', message: 'Username must be at least 4 characters' });
@@ -59,9 +60,10 @@ export const user_create_post = async (req, res) => {
 
 export const user_get = (req, res) => {
   const sqlQuery = 'select * from user where username = ?';
-  const params = [req.params.username];
+  const { username } = req.body;
+  const params = [username];
 
-  if (req.params.username.length < 4) {
+  if (username.length < 4) {
     return res
       .status(400)
       .json({ status: 'error', message: 'Username must be at least 4 characters' });
