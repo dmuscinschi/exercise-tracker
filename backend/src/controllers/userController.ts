@@ -153,20 +153,19 @@ export const user_exercises_post = async (req, res) => {
 
 export const user_logs_get = async (req, res) => {
   const params = [req.params.userId];
-  const limit = req.query.limit;
+  const limit = req.query.limit ? req.query.limit : Infinity;
   const fromDate = req.query.from;
   const to = req.query.to;
   let sqlQuery = `select * from ( select * from exercises where userId = ? order by datetime(date) asc) as ordered_exercises
    ${fromDate ? `where date >= '${fromDate}'` : ''} 
-   ${to ? (!fromDate ? `where date < '${to}'` : `and date < '${to}'`) : ''}
-   ${limit ? `limit ${limit}` : ''}
+   ${to ? (!fromDate ? `where date <= '${to}'` : `and date <= '${to}'`) : ''}
    `;
 
   let sqlQuery1 = 'select * from user where id = ?';
 
   let exercisesLog: UserExerciseLog;
 
-  let id, username;
+  let id, username, count;
 
   if (isNaN(req.params.userId)) {
     return res.status(400).json({ status: 'error', message: 'User id should be number' });
@@ -200,6 +199,7 @@ export const user_logs_get = async (req, res) => {
         description: item.description,
         duration: item.duration,
       }));
+      count = exercies.length;
       resolve(true);
     });
   });
@@ -207,8 +207,8 @@ export const user_logs_get = async (req, res) => {
   exercisesLog = {
     id,
     username,
-    logs: exercies,
-    count: exercies.length,
+    logs: exercies.slice(0, limit),
+    count,
   };
 
   res.status(200).json({
