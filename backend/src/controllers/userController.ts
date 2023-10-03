@@ -8,8 +8,7 @@ export const usersList = (_, res) => {
   let params = [];
   db.all(sql, params, (err, rows: User[]) => {
     if (err) {
-      res.status(400).json({ status: 'error', error: err.message });
-      return;
+      return res.status(400).json({ status: 'error', error: err.message });
     }
     res.status(200).json({
       status: 'success',
@@ -32,8 +31,7 @@ export const user_create_post = async (req, res) => {
   }
 
   if (!(await userExists(params))) {
-    res.status(400).json({ status: 'error', error: 'User already exists' });
-    return;
+    return res.status(400).json({ status: 'error', error: 'User already exists' });
   }
 
   if (username.length < 4) {
@@ -44,8 +42,7 @@ export const user_create_post = async (req, res) => {
 
   db.run(sqlQuery, params, function (this, err) {
     if (err) {
-      res.status(400).json({ status: 'error', error: err.message });
-      return;
+      return res.status(400).json({ status: 'error', error: err.message });
     }
 
     res.status(200).json({
@@ -71,8 +68,7 @@ export const user_get = (req, res) => {
 
   db.get(sqlQuery, params, (err, row) => {
     if (err) {
-      res.status(400).json({ status: 'error', error: err.message });
-      return;
+      return res.status(400).json({ status: 'error', error: err.message });
     }
     res.json({
       status: 'success',
@@ -193,8 +189,7 @@ export const user_logs_get = async (req, res) => {
   await new Promise((resolve) => {
     db.all(sqlQuery, params, (err, row: Exercise[]) => {
       if (err) {
-        res.status(400).json({ status: 'error', message: err.message });
-        return;
+        return res.status(400).json({ status: 'error', message: err.message });
       }
       exercies = row.map((item) => ({
         date: new Date(item.date).toDateString(),
