@@ -156,9 +156,7 @@ export const user_logs_get = async (req, res) => {
   const limit = req.query.limit;
   const fromDate = req.query.from;
   const to = req.query.to;
-  let sqlQuery = `select * from ( select * from exercises where userId = ? order by datetime(date) ${
-    fromDate ? 'asc' : 'desc'
-  }) as ordered_exercises
+  let sqlQuery = `select * from ( select * from exercises where userId = ? order by datetime(date) asc) as ordered_exercises
    ${fromDate ? `where date >= '${fromDate}'` : ''} 
    ${to ? (!fromDate ? `where date < '${to}'` : `and date < '${to}'`) : ''}
    ${limit ? `limit ${limit}` : ''}
